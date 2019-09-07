@@ -4,8 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Checklist extends Model 
+class Checklist extends Model
 {
+    protected $perPage = 10;
     /**
      * The attributes that are mass assignable.
      *
