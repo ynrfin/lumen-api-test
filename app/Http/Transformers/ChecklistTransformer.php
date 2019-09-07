@@ -27,8 +27,8 @@ class ChecklistTransformer extends TransformerAbstract
                 'urgency' => (int)$checklist->urgency,
                 'completed_at' => $checklist->completed_at,
                 'last_update_by' => $checklist->updated_by,
-                'updated_at' => $checklist->updated_at,
-                'created_at' => $checklist->created_at,
+                'updated_at' => date('c', strtotime($checklist->updated_at)),
+                'created_at' => date('c', strtotime($checklist->created_at)),
             ],
             'links' => [
                 'self' => route('checklists.showOne', ['id' => $checklist->id])
