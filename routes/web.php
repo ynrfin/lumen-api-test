@@ -14,3 +14,12 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => '/api/v1'], function() use($router){
+    $router->group(['prefix' => 'checklists'], function() use ($router){
+        $router->get('/', ['as' => 'checklists.showAll', 'uses' => "ChecklistController@showAll"]);
+        $router->get('/{id}', ['as' => 'checklists.showOne', 'uses' => "ChecklistController@showOne"]);
+
+    });
+
+});
