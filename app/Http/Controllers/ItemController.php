@@ -173,7 +173,6 @@ class ItemController extends Controller
      */
     public function showAll(Request $request)
     {
-        dd('wip');
         $pageOffset = $request->query('page[offset]', 10);
         $pageLimit = $request->query('page[limit]', 10);
 
@@ -200,14 +199,16 @@ class ItemController extends Controller
             ->take($pageLimit)
             ->get();
 
+        $items = Item::paginate(10);
+
         $itemsResponse = fractal()
             ->collection($items)
             ->transformWith(new ItemShowOneTransformer())
             ->serializeWith(new ChecklistSerializer())
-            ->paginateWith(new CustomPaginator(Item::paginate($pageLimit)))
+            ->paginateWith(new CustomPaginator(Item::paginate(10)))
             ->toArray();
 
-        return response()->json($checklistResponse);
+        return response()->json($itemsResponse);
     }
     
 }
