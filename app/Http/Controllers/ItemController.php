@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Checklist;
 use App\Http\Transformers\ItemShowOneTransformer;
 use App\Http\Transformers\ItemTransformer;
+use App\Http\Transformers\ItemCompleteTransformer;
 use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -97,5 +98,37 @@ class ItemController extends Controller
         $item->delete();
 
         return response()->json("", 204);
+    }
+
+    /**
+     * turn the item as completed item
+     *
+     * @return mixed
+     */
+    public function complete(Request $request)
+    {
+        $validator = Validator::make($request->input(), [
+            'data.*.item_id' => 'required|integer'
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 422);
+        }
+
+        $validatedData = $validator->valid();
+        $itemIds = $validatedData['data'];
+
+        $updated = DB::table('items')
+            ->whereIn('id', $itemIds)
+            ->update(['is_completed' => true, 'completed_at' => date("Y-m-d H:i:s")]);
+
+        $items = Item::whereIn('id', $itemIds)->get();
+
+        $itemsResponse = fractal()
+            ->collection($items)
+            ->transformWith(new ItemCompleteTransformer())
+            ->toArray();
+
+        return response()->json($itemsResponse);
     }
 }
