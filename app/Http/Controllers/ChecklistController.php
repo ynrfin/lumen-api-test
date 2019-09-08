@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Checklist;
-use App\Helpers\Formatter;
 use App\User;
 use App\Http\Transformers\ChecklistTransformer;
 use App\Http\Transformers\ChecklistSerializer;
