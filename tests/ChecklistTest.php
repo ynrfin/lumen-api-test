@@ -254,4 +254,17 @@ class ChecklistTest extends TestCase
         $this->assertNull($response->data->attributes->completed_at);
     }
 
+    /**
+     * test unauthenticated user acessing Delete route returns 401
+     *
+     * @return void
+     */
+    public function testAccessDeleteWithoutAuthReturns401()
+    {
+        factory(App\Checklist::class, 5)->create();
+
+        $this->delete('/2')
+            ->seeStatusCode(401);
+    }
+
 }
