@@ -15,11 +15,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => '/api/v1'], function() use($router){
+$router->group(['prefix' => '/api/v1', 'middleware' => 'auth'], function() use($router){
     $router->group(['prefix' => 'checklists'], function() use ($router){
         $router->get('/', ['as' => 'checklists.showAll', 'uses' => "ChecklistController@showAll"]);
         $router->get('/{id}', ['as' => 'checklists.showOne', 'uses' => "ChecklistController@showOne"]);
-
+        $router->patch("/{id}", ['as' => 'checklists.patch', 'uses' => 'ChecklistController@patch']);
     });
 
 });
