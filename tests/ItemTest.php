@@ -407,4 +407,45 @@ class ItemTest extends TestCase
         $this->assertEquals(3, count($response['data']));
 
     }
+
+    /**
+     * incomplete partial exist item
+     *
+     * @return void
+     */
+    public function testIncompletePartialExistRecordReturnAllUpdatedCount()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $payload = [
+            'data' =>[
+                [
+                    'item_id'=> 1,
+                ],
+                [
+                    'item_id'=> 3,
+                ],
+                [
+                    'item_id'=> 5,
+                ],
+            ]
+        ];
+
+        $this->actingAs($user)
+            ->post('/incomplete', $payload)
+            ->seeInDatabase('items', ['id' => 1, 'is_completed' => false, 'completed_at' => null])
+            ->seeInDatabase('items', ['id' => 3, 'is_completed' => false, 'completed_at' => null])
+            ->notSeeInDatabase('items', ['id' => 5, 'is_completed' => false, 'completed_at' => null])
+            ->seeJson(['id' => 1, 'item_id' => 1, 'is_completed' => false, 'checklist_id' => 1])
+            ->seeJson(['id' => 3, 'item_id' => 3, 'is_completed' => false, 'checklist_id' => 2])
+            ->seeStatusCode(200);
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(2, count($response['data']));
+
+    }
 }
