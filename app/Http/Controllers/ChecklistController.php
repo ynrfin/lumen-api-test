@@ -122,7 +122,7 @@ class ChecklistController extends Controller
      *
      * @return json
      */
-    public function delete(Request $requets)
+    public function delete(Request $request, $id)
     {
         $resource = Checklist::findOrFail($id);
 
