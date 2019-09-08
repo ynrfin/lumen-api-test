@@ -131,4 +131,36 @@ class ItemController extends Controller
 
         return response()->json($itemsResponse);
     }
+
+    /**
+     * turn the item to incomplete state
+     *
+     * @return mixed
+     */
+    public function incomplete(Request $request)
+    {
+        $validator = Validator::make($request->input(), [
+            'data.*.item_id' => 'required|integer'
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 422);
+        }
+
+        $validatedData = $validator->valid();
+        $itemIds = $validatedData['data'];
+
+        $updated = DB::table('items')
+            ->whereIn('id', $itemIds)
+            ->update(['is_completed' => false, 'completed_at' => null]);
+
+        $items = Item::whereIn('id', $itemIds)->get();
+
+        $itemsResponse = fractal()
+            ->collection($items)
+            ->transformWith(new ItemCompleteTransformer())
+            ->toArray();
+
+        return response()->json($itemsResponse);
+    }
 }

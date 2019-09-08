@@ -26,6 +26,7 @@ $router->group(['prefix' => '/api/v1', 'middleware' => 'auth'], function() use($
         $router->get("/{checklistId}/items/{itemId}", ['as' => 'checklists.item.showOne', 'uses' => 'ItemController@showOne']);
         $router->delete("/{checklistId}/items/{itemId}", ['as' => 'checklists.item.delete', 'uses' => 'ItemController@delete']);
         $router->post("/complete", ['as' => 'checklists.item.complete', 'uses' => 'ItemController@complete']);
+        $router->post("/incomplete", ['as' => 'checklists.item.incomplete', 'uses' => 'ItemController@incomplete']);
     });
 
 });
