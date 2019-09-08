@@ -102,6 +102,11 @@ class ChecklistController extends Controller
         if(array_key_exists('updated_at', $attributes)){
             unset($attributes['updated_at']);
         }
+        if(array_key_exists('is_completed', $attributes)){
+            if(true == $attributes['is_completed']){
+                $attributes['completed_at'] = date('Y-m-d H:i:s');
+            }
+        }
 
         unset($attributes["last_update_by"]);
         $attributes['updated_by'] = $request->user()->email;
