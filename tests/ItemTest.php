@@ -64,4 +64,25 @@ class ItemTest extends TestCase
             ->seeStatusCode(200);
     }
 
+    /**
+     * test create without authorization header returns 401
+     *
+     * @return void
+     */
+    public function testCreateWithoutAuthReturns401()
+    {
+        $attributes = [
+            "description" => 'some descripton'
+        ];
+
+        $fullPayload = [
+            "data" => [
+                "attributes" => $attributes
+            ]
+        ];
+
+        $this->post('/3/items')->seeStatusCode(401);
+    }
+    
+
 }
