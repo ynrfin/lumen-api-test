@@ -28,6 +28,31 @@ class ItemTest extends TestCase
         ]
     ];
 
+    protected $itemShowOneResponseStructure = [
+        "data" => [
+            'type',
+            'id',
+            'attributes' => [
+                'description',
+                'is_completed',
+                'completed_at',
+                'due',
+                'urgency',
+                'updated_by',
+                'created_by',
+                'checklist_id',
+                'assignee_id',
+                'task_id' ,
+                'deleted_at',
+                'updated_at',
+                'created_at',
+            ],
+            'links' => [
+                'self'
+            ]
+        ]
+    ];
+
     /**
      * test minimum payload
      *
@@ -160,4 +185,21 @@ class ItemTest extends TestCase
             ->seeStatusCode(422);
     }
 
+    /**
+     * test get exist item
+     *
+     * @return void
+     */
+    public function testGetOneExistItemReturn200AndTheItem()
+    {
+        factory(App\Checklist::class, 5)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 12)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $this->actingAs($user)
+            ->get('/1/items/5')
+            ->seeJsonStructure($this->itemShowOneResponseStructure)
+            ->seeStatusCode(200);
+    }
 }
