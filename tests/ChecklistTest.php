@@ -88,7 +88,7 @@ class ChecklistTest extends TestCase
 
         $attributes = [
             "object_domain" => "contact",
-            "object_id" => "1",
+            "object_id" => 11,
             "description" => "Need to verify this guy house.",
             "is_completed" => false,
             "completed_at" => null,
