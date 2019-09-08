@@ -253,4 +253,109 @@ class ItemTest extends TestCase
             ->delete('/1/items/2')
             ->seeStatusCode(204);
     }
+
+    /**
+     * complete exist item
+     *
+     * @return void
+     */
+    public function testCompleteExistRecordReturn200()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $payload = [
+            'data' =>[
+                [
+                    'item_id'=> 1,
+                ],
+                [
+                    'item_id'=> 3,
+                ],
+                [
+                    'item_id'=> 4,
+                ],
+            ]
+        ];
+
+        $this->actingAs($user)
+            ->post('/complete', $payload)
+            ->seeStatusCode(200);
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(3, count($response['data']));
+    }
+
+    /**
+     * complete partial exist item
+     *
+     * @return void
+     */
+    public function testCompletePartialExistRecordReturn200AndUpdatedCount()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $payload = [
+            'data' =>[
+                [
+                    'item_id'=> 1,
+                ],
+                [
+                    'item_id'=> 3,
+                ],
+                [
+                    'item_id'=> 5,
+                ],
+            ]
+        ];
+
+        $this->actingAs($user)
+            ->post('/complete', $payload)
+            ->seeStatusCode(200);
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(2, count($response['data']));
+    }
+
+    /**
+     * complete partial exist item
+     *
+     * @return void
+     */
+    public function testCompletePartialExistRecordReturn0UpdatedCount()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $payload = [
+            'data' =>[
+                [
+                    'item_id'=> 10,
+                ],
+                [
+                    'item_id'=> 30,
+                ],
+                [
+                    'item_id'=> 58,
+                ],
+            ]
+        ];
+
+        $this->actingAs($user)
+            ->post('/complete', $payload)
+            ->seeStatusCode(200);
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(0, count($response['data']));
+    }
 }
