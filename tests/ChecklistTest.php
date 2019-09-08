@@ -324,4 +324,50 @@ class ChecklistTest extends TestCase
                 ->assertResponseStatus(200);
     }
 
+    /**
+     * test create new record with minimum fields, only required ones
+     *
+     * @return void
+     */
+    public function testCreateWithInvalidValueReturn422()
+    {
+        $user = Factory(App\User::class)->create();
+        $attributes= [
+            "object_domain" => 111,
+            "object_id"=> 34,
+            "description"=> 2344,
+            "is_completed" => "ok"
+        ];
+
+        $this->actingAs($user)
+             ->post('/', [
+                "data"=> [
+                    "attributes"=> $attributes
+                ]
+            ])
+            ->assertResponseStatus(422);
+    }
+
+    /**
+     * test create new record with minimum fields, only required ones
+     *
+     * @return void
+     */
+    public function testCreateWithoutReqyiredFieldReturn422()
+    {
+        $user = Factory(App\User::class)->create();
+        $attributes= [
+            "object_id"=> "1",
+            "description"=> "Need to verify this guy house."
+        ];
+
+        $this->actingAs($user)
+             ->post('/', [
+                "data"=> [
+                    "attributes"=> $attributes
+                ]
+            ])
+                ->assertResponseStatus(422);
+    }
+
 }
