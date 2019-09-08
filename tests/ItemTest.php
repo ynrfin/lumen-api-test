@@ -282,6 +282,9 @@ class ItemTest extends TestCase
 
         $this->actingAs($user)
             ->post('/complete', $payload)
+            ->seeInDatabase('items', ['id' => 1, 'is_completed' => true])
+            ->seeInDatabase('items', ['id' => 3, 'is_completed' => true])
+            ->seeInDatabase('items', ['id' => 4, 'is_completed' => true])
             ->seeStatusCode(200);
 
         $response = json_decode($this->response->getContent(), true);
@@ -317,6 +320,9 @@ class ItemTest extends TestCase
 
         $this->actingAs($user)
             ->post('/complete', $payload)
+            ->seeInDatabase('items', ['id' => 1, 'is_completed' => true])
+            ->seeInDatabase('items', ['id' => 3, 'is_completed' => true])
+            ->notSeeInDatabase('items', ['id' => 5, 'is_completed' => true])
             ->seeStatusCode(200);
 
         $response = json_decode($this->response->getContent(), true);
@@ -357,5 +363,6 @@ class ItemTest extends TestCase
         $response = json_decode($this->response->getContent(), true);
 
         $this->assertEquals(0, count($response['data']));
+
     }
 }
