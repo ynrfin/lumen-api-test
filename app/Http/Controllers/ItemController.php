@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Checklist;
+use App\Http\Transformers\ItemShowOneTransformer;
 use App\Http\Transformers\ItemTransformer;
 use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Validator;
+use DB;
 
 class ItemController extends Controller
 {
@@ -62,5 +64,38 @@ class ItemController extends Controller
         $res =  fractal($item, new ItemTransformer());
         return response()->json($res);
     }
-    
+
+    /**
+     * get an item
+     *
+     * @return void
+     */
+    public function showOne(Request $request, $checklistId, $itemId)
+    {
+        $item = Item::where([
+            ['id', '=', $itemId],
+            ['checklist_id', '=',$checklistId]
+        ])->firstOrFail();
+
+        $res =  fractal($item, new ItemShowOneTransformer());
+        return response()->json($res);
+
+    }
+
+    /**
+     * delete item by id
+     *
+     * @return 204
+     */
+    public function delete($checklistId, $itemId)
+    {
+        $item = Item::where([
+            ['id', '=', $itemId],
+            ['checklist_id', '=',$checklistId]
+        ])->firstOrFail();
+
+        $item->delete();
+
+        return response()->json("", 204);
+    }
 }
