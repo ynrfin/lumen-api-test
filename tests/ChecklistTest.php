@@ -86,8 +86,26 @@ class ChecklistTest extends TestCase
         factory(App\Checklist::class, 5)->create();
         $user = Factory(App\User::class)->create();
 
+        $attributes = [
+            "object_domain" => "contact",
+            "object_id" => "1",
+            "description" => "Need to verify this guy house.",
+            "is_completed" => false,
+            "completed_at" => null,
+            'created_at' => "2018-01-25T07:50:14" 
+        ];
+
         $this->actingAs($user)
-             ->patch('/4')
+             ->patch('/4', [
+                "data" => [
+                    'id' => 2,
+                    'type' => 'checklists', 
+                    'attributes' => $attributes,
+                    'links' => [
+                        "self" => 'some-links'
+                    ]
+                ]
+             ])
              ->seeStatusCode(422);
     }
 
