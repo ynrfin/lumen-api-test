@@ -20,7 +20,7 @@ class ItemTransformer extends TransformerAbstract
             'id' => $item->id,
             'attributes' => [
                 'description' => $item->description,
-                'is_completed' => $item->is_completed,
+                'is_completed' => (boolean)$item->is_completed,
                 'completed_at' => $item->completed_at,
                 'due' => $item->due,
                 'urgency' => (int)$item->urgency,
