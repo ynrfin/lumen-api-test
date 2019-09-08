@@ -13,7 +13,16 @@ class Checklist extends Model
      * @var array
      */
     protected $fillable = [
-        'object_domain', 'object_id', 'description',
+        'object_domain', 
+        'object_id', 
+        'description',
+        'is_completed', 
+        'completed_at',
+        'updated_by',
+        'updated_at',
+        'created_at',
+        'due',
+        'urgency'
     ];
 
     /**
