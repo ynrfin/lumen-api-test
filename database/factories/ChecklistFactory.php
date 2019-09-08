@@ -13,6 +13,7 @@
 
 $factory->define(App\Checklist::class, function (Faker\Generator $faker) {
     return [
+        'object_id' => $faker->randomNumber(),
         'object_domain' => $faker->sentence(3),
         'description' => $faker->paragraph(),
         'is_completed' => $faker->boolean(),
