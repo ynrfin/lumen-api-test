@@ -279,7 +279,8 @@ class ChecklistTest extends TestCase
 
         $this->actingAs($user)
             ->delete('/3')
-            ->seeStatusCode(204);
+            ->seeStatusCode(204)
+            ->notSeeInDatabase('checklists',['id' => 3]);
     }
 
     /**
