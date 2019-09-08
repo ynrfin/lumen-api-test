@@ -116,4 +116,19 @@ class ChecklistController extends Controller
         return response()->json($res);
 
     }
+
+    /**
+     * delete by id
+     *
+     * @return json
+     */
+    public function delete(Request $requets)
+    {
+        $resource = Checklist::findOrFail($id);
+
+        $resource->delete();
+
+        return response()->json(null, 204);
+    }
+
 }
