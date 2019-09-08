@@ -182,4 +182,76 @@ class ChecklistTest extends TestCase
         ->seeInDatabase('checklists', $attributes);
     }
 
+    /**
+     * check when is_completed is true, completed_at date is not null
+     *
+     * @return json
+     */
+    public function testPatchIsCompletedToTrueInsertDateToCompletedAtField()
+    {
+        factory(App\Checklist::class, 5)->create();
+        $user = Factory(App\User::class)->create();
+        $attributes = [
+            "object_domain" => "contact",
+            "object_id" => "1",
+            "description" => "Need to verify this guy house.",
+            "is_completed" => true,
+        ];
+
+        $dirtyAttribute = $attributes;
+        $dirtyAttribute['created_at'] ="2018-01-25T07:50:14+00:00" ;
+
+        $this->actingAs($user)
+            ->patch('/2', [
+            "data" => [
+                'id' => 2,
+                'type' => 'checklists', 
+                'attributes' => $dirtyAttribute,
+                'links' => [
+                    "self" => 'some-links'
+                ]
+            ]
+        ])->seeStatusCode(200)
+          ->seeInDatabase('checklists', $attributes);
+
+        $response = json_decode($this->response->getContent());
+        $this->assertNotNull($response->data->attributes->completed_at);
+    }
+
+    /**
+     * check when is_completed is false, completed_at date null
+     *
+     * @return json
+     */
+    public function testPatchIsCompletedFalseCompletedAtNull()
+    {
+        factory(App\Checklist::class, 5)->create();
+        $user = Factory(App\User::class)->create();
+        $attributes = [
+            "object_domain" => "contact",
+            "object_id" => "1",
+            "description" => "Need to verify this guy house.",
+            "is_completed" => false,
+        ];
+
+        $dirtyAttribute = $attributes;
+        $dirtyAttribute['created_at'] ="2018-01-25T07:50:14+00:00" ;
+
+        $this->actingAs($user)
+            ->patch('/2', [
+            "data" => [
+                'id' => 2,
+                'type' => 'checklists', 
+                'attributes' => $dirtyAttribute,
+                'links' => [
+                    "self" => 'some-links'
+                ]
+            ]
+        ])->seeStatusCode(200)
+          ->seeInDatabase('checklists', $attributes);
+
+        $response = json_decode($this->response->getContent());
+        $this->assertNull($response->data->attributes->completed_at);
+    }
+
 }
