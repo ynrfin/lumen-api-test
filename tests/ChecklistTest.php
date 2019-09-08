@@ -140,8 +140,46 @@ class ChecklistTest extends TestCase
                 ]
             ]
         ])->seeStatusCode(200)
-        ->seeInDatabase($attributes);
+        ->seeInDatabase('checklists', $attributes);
+    }
 
+    /**
+     * testing
+     *
+     * @return json
+     */
+    public function testPatchWithAllFieldReturns200()
+    {
+        factory(App\Checklist::class, 5)->create();
+        $user = Factory(App\User::class)->create();
+        $attributes = [
+            "object_domain"=> "contact",
+            "object_id" => "1",
+            "description" => "Need to verify this guy house.",
+            "is_completed" => false,
+            "due" => null,
+            "urgency" => 0,
+            "completed_at" => null,
+        ];
+
+        $dirtyAttribute = $attributes;
+        $dirtyAttribute['created_at'] ="2018-01-25T07:50:14+00:00" ;
+        $dirtyAttribute['updated_at'] ="2018-01-25T07:50:14+00:00" ;
+        $dirtyAttribute['last_update_by'] ="someon" ;
+
+
+        $this->actingAs($user)
+            ->patch('/2', [
+            "data" => [
+                'id' => 2,
+                'type' => 'checklists', 
+                'attributes' => $dirtyAttribute,
+                'links' => [
+                    "self" => 'some-links'
+                ]
+            ]
+        ])->seeStatusCode(200)
+        ->seeInDatabase('checklists', $attributes);
     }
 
 }
