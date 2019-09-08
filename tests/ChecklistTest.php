@@ -6,7 +6,7 @@ use App\User;
 
 class ChecklistTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
     protected $baseUrl = '/api/v1/checklists';
 
     protected $checklistStructure = [
