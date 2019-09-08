@@ -267,4 +267,18 @@ class ChecklistTest extends TestCase
             ->seeStatusCode(401);
     }
 
+    /**
+     * test delete a checklist with right credential
+     *
+     * @return void
+     */
+    public function testAuthenticatedAndValidDeleteUrlReturns204()
+    {
+        factory(App\Checklist::class, 5)->create();
+        $user = Factory(App\User::class)->create();
+
+        $this->actingAs($user)
+            ->delete('/3')
+            ->seeStatusCode(204)
+    }
 }
