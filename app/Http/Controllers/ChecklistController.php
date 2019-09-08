@@ -131,4 +131,44 @@ class ChecklistController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * create new resource
+     *
+     * @return mixed
+     */
+    public function create(Request $request)
+    {
+        $validator = Validator::make($request->input(),[
+            'data' => 'required',
+            'data.attributes' => 'required',
+            'data.attributes.object_domain' => 'required',
+            'data.attributes.object_id' => 'required|string',
+            'data.attributes.description' => 'required|string',
+            'data.attributes.is_completed' => 'boolean',
+            'data.attributes.created_at' => 'string',
+            'data.attributes.updated_by' => 'string',
+            'data.attributes.due' =>[function($attribute, $value, $fail){
+                if(null == $value || Carbon::hasFormat($value, "Y:m:d H:i:s")){
+                }else{
+                    $fail($attribute . "not null and wrong format");
+                }
+            }],
+            'data.attributes.urgency' => 'integer',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 422);
+        }
+
+        $attributes = $validator->valid()['data']['attributes'];
+
+        unset($attributes['completed_at']);
+        unset($attributes['created_at']);
+        unset($attributes['updated_at']);
+        $attributes['created_by'] = $request->user()->id;
+
+        $checklist = Checklist::create($attributes);
+        $res =  fractal($checklist, new ChecklistTransformer());
+        return response()->json($res);
+    }
 }

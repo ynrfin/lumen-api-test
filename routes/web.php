@@ -21,6 +21,7 @@ $router->group(['prefix' => '/api/v1', 'middleware' => 'auth'], function() use($
         $router->get('/{id}', ['as' => 'checklists.showOne', 'uses' => "ChecklistController@showOne"]);
         $router->patch("/{id}", ['as' => 'checklists.patch', 'uses' => 'ChecklistController@patch']);
         $router->delete("/{id}", ['as' => 'checklists.patch', 'uses' => 'ChecklistController@delete']);
+        $router->post("/", ['as' => 'checklists.create', 'uses' => 'ChecklistController@create']);
     });
 
 });
