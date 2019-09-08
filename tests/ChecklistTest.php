@@ -279,6 +279,23 @@ class ChecklistTest extends TestCase
 
         $this->actingAs($user)
             ->delete('/3')
-            ->seeStatusCode(204)
+            ->seeStatusCode(204);
     }
+
+    /**
+     * delete nonexistent resource returns 40
+     *
+     * @return void
+     */
+    public function testDeleteNonExistentRecordReturns404()
+    {
+        factory(App\Checklist::class, 5)->create();
+        $user = Factory(App\User::class)->create();
+
+        $this->actingAs($user)
+            ->delete('/30')
+            ->seeStatusCode(404)
+            ->seeJson(['status' => 404, 'error' => 'Not Found']);
+    }
+
 }
