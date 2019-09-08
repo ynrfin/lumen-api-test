@@ -32,4 +32,15 @@ class Checklist extends Model
      */
     protected $hidden = [
     ];
+
+    /**
+     * relationship to items table
+     *
+     * @return Item
+     */
+    public function items()
+    {
+        return $this->hasMany('App\Item');
+    }
+    
 }
