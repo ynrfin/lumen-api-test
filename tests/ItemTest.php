@@ -448,4 +448,43 @@ class ItemTest extends TestCase
         $this->assertEquals(2, count($response['data']));
 
     }
+
+    /**
+     * incomplete nonexist item
+     *
+     * @return void
+     */
+    public function testIncompleteNonexistRecordReturnAllUpdatedCount()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $payload = [
+            'data' =>[
+                [
+                    'item_id'=> 10,
+                ],
+                [
+                    'item_id'=> 30,
+                ],
+                [
+                    'item_id'=> 50,
+                ],
+            ]
+        ];
+
+        $this->actingAs($user)
+            ->post('/incomplete', $payload)
+            ->notSeeInDatabase('items', ['id' => 10, 'is_completed' => false, 'completed_at' => null])
+            ->notSeeInDatabase('items', ['id' => 30, 'is_completed' => false, 'completed_at' => null])
+            ->notSeeInDatabase('items', ['id' => 50, 'is_completed' => false, 'completed_at' => null])
+            ->seeStatusCode(200);
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(0, count($response['data']));
+
+    }
 }
