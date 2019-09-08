@@ -202,4 +202,21 @@ class ItemTest extends TestCase
             ->seeJsonStructure($this->itemShowOneResponseStructure)
             ->seeStatusCode(200);
     }
+
+    /**
+     * test get exist item
+     *
+     * @return void
+     */
+    public function testGetNonExistItemReturn404()
+    {
+        factory(App\Checklist::class, 2)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 2)->make());
+        });
+        $user = Factory(App\User::class)->create();
+
+        $this->actingAs($user)
+            ->get('/1/items/5')
+            ->seeStatusCode(404);
+    }
 }
