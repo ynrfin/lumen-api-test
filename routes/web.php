@@ -22,6 +22,7 @@ $router->group(['prefix' => '/api/v1', 'middleware' => 'auth'], function() use($
         $router->patch("/{id}", ['as' => 'checklists.patch', 'uses' => 'ChecklistController@patch']);
         $router->delete("/{id}", ['as' => 'checklists.patch', 'uses' => 'ChecklistController@delete']);
         $router->post("/", ['as' => 'checklists.create', 'uses' => 'ChecklistController@create']);
+        $router->post("/{id}/items", ['as' => 'checklists.item.create', 'uses' => 'ItemController@create']);
     });
 
 });
