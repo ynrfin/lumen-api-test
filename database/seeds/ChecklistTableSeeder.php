@@ -11,6 +11,8 @@ class ChecklistTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Checklist::class, 50)->create();
+        factory(App\Checklist::class, 50)->create()->each(function($checklist){
+            $checklist->items()->saveMany(factory(App\Item::Class, 23)->make());
+        });
     }
 }
