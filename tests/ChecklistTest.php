@@ -299,4 +299,29 @@ class ChecklistTest extends TestCase
             ->seeJson(['status' => 404, 'error' => 'Not Found']);
     }
 
+    /**
+     * test create new record with minimum fields, only required ones
+     *
+     * @return void
+     */
+    public function testCreateOnlyRequiredFieldsSuccess()
+    {
+        $user = Factory(App\User::class)->create();
+        $attributes= [
+            "object_domain" => "rarar",
+            "object_id"=> "1",
+            "description"=> "Need to verify this guy house."
+        ];
+
+        $this->actingAs($user)
+             ->post('/', [
+                "data"=> [
+                    "attributes"=> $attributes
+                ]
+            ])
+              ->seeInDatabase('checklists', $attributes)
+            ->seeJsonStructure($this->checklistStructure)
+                ->assertResponseStatus(200);
+    }
+
 }
