@@ -6,6 +6,8 @@ use App\Checklist;
 use App\Http\Transformers\ItemShowOneTransformer;
 use App\Http\Transformers\ItemTransformer;
 use App\Http\Transformers\ItemCompleteTransformer;
+use App\Http\Transformers\ChecklistSerializer;
+use App\Http\Transformers\CustomPaginator;
 use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -163,4 +165,49 @@ class ItemController extends Controller
 
         return response()->json($itemsResponse);
     }
+
+    /**
+     * show All items
+     *
+     * @return json
+     */
+    public function showAll(Request $request)
+    {
+        dd('wip');
+        $pageOffset = $request->query('page[offset]', 10);
+        $pageLimit = $request->query('page[limit]', 10);
+
+        $filter = $request->query('filter');
+        $items = DB::table("items");
+        if(isset($filter['created_by']['is'])){
+            $items = $items->where('created_by', $filter['created_by']['is']);
+        }
+        if(isset($filter['assignee_id']['is'])){
+            $items = $items->where('assignee_id', $filter['created_by']['is']);
+        }
+        if(isset($filter['is_completed']['is'])){
+            $items = $items->where('is_completed', $filter['is_completed']['is']);
+        }
+        if(isset($filter['due']['between'])){
+            $between = $filter['due']['between'];
+            $exp = explode(',', $between);
+            
+            $items = $items->whereDate('due','>' , $exp[0]);
+            $items = $items->whereDate('due', '<', $exp[1]);
+        }
+        
+        $items = $items->skip($pageOffset)
+            ->take($pageLimit)
+            ->get();
+
+        $itemsResponse = fractal()
+            ->collection($items)
+            ->transformWith(new ItemShowOneTransformer())
+            ->serializeWith(new ChecklistSerializer())
+            ->paginateWith(new CustomPaginator(Item::paginate($pageLimit)))
+            ->toArray();
+
+        return response()->json($checklistResponse);
+    }
+    
 }
